@@ -3,6 +3,7 @@ import java.util.Scanner;
 
 import com.plin.hangman.pojo.ResStartGameOnPojo;
 import com.plin.hangman.pojo.ResSubmitPojo;
+import com.plin.hangman.utils.SearchWordsUtils;
 import com.plin.hangman.main.HangmanMain;
 import com.plin.hangman.pojo.ResGetResultPojo;
 import com.plin.hangman.pojo.ResGivePojo;
@@ -15,12 +16,20 @@ public class Main {
 		ResMakeGuessPojo resMakeGuessPojo = hmain.makeGuess(sessionId, guessALetter);
 		System.out.println(resMakeGuessPojo);
 	}
+	public static void giveWord(HangmanMain hmain,String guessALetter) throws IOException {
+		System.out.println("Server is giving you a word");
+		ResGivePojo giveWord = hmain.giveWord(sessionId);
+		System.out.println(giveWord);
+		System.out.println("possible words=");
+		SearchWordsUtils search = new SearchWordsUtils();
+		System.out.println(search.searchWords(giveWord.getData().getWord()));
+	}
 	
 	public static void main(String[] args) throws IOException {
 		Scanner scanner = new Scanner(System.in);
 		HangmanMain hmain=new HangmanMain();
 		while (true) {
-			System.out.println("please choose one menu :");
+			System.out.println("please choose one menu number:");
 			System.out.println(
 					" 1. Start New Game; \t\t\t 2. Give Me A Word;"
 					+ "\n 3. Make A Guess;\t\t\t 4. Get My Result;"
@@ -36,17 +45,13 @@ public class Main {
 				ResStartGameOnPojo startGame = hmain.startGame(playerId);
 				sessionId=startGame.getSessionId();
 				System.out.println("sessionId="+sessionId);
-				System.out.println("Server is giving you a word");
-				ResGivePojo giveWord = hmain.giveWord(sessionId);
-				System.out.println(giveWord);
+				giveWord(hmain,sessionId);
 				menu="3";
 			}
 
 			if ("2".equals(menu)) {
 				if(sessionId!=null) {
-					System.out.println("Server is giving you a word");
-					ResGivePojo giveWord = hmain.giveWord(sessionId);
-					System.out.println(giveWord);
+					giveWord(hmain,sessionId);
 				}else {
 					System.out.println("please start a new game or resume last game");
 				}
@@ -65,9 +70,7 @@ public class Main {
 						//判断是否guess了10次
 						if("10".equals(savedGame[4])) {
 							System.out.println("you have already guessed wrong 10 times on current word");
-							System.out.println("Server is giving you a word");
-							ResGivePojo giveWord = hmain.giveWord(sessionId);
-							System.out.println(giveWord);
+							giveWord(hmain,sessionId);
 							break;
 						}
 						
