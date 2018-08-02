@@ -20,9 +20,6 @@ public class Main {
 		System.out.println("Server is giving you a word");
 		ResGivePojo giveWord = hmain.giveWord(sessionId);
 		System.out.println(giveWord);
-		System.out.println("possible words=");
-		SearchWordsUtils search = new SearchWordsUtils();
-		System.out.println(search.searchWords(giveWord.getData().getWord()));
 	}
 	
 	public static void main(String[] args) throws IOException {
