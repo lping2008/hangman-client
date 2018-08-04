@@ -1,8 +1,6 @@
 package test;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -12,27 +10,24 @@ import org.junit.Test;
 import com.plin.hangman.utils.SearchWordsUtils;
 
 public class FindWordsTest {
-	
 	@Test
 	public void findWordsTest() {
-		String word = "**AD*";
+		String word = "AA**";
 		SearchWordsUtils search = new SearchWordsUtils();
-		List<String> findWordsbyLetterNum = search.findWordsbyLetterNum(word.length());
+		List<String> findWordsbyLetterNum = search.findAllWordLenthList(word.length());
 		System.out.println("findWordsbyLetterNum="+findWordsbyLetterNum);
-		List<String> searchByWord=search.searchWords(word,findWordsbyLetterNum);
-		System.out.println("search words by word="+searchByWord);
+		List<String> possibleWordsList=search.getPossibleWordsList(word);
+		System.out.println("search words by word="+possibleWordsList);
 		
-		Map<Character, Integer> letterNumMap = search.findWordsByMostLetter(searchByWord);
+		Map<Character, Integer> letterNumMap = search.findWordsByMostLetter(possibleWordsList);
+		System.out.println("letterNumMap="+letterNumMap);
 		
-		List<Map.Entry<Character,Integer>> sortedList = new ArrayList<Map.Entry<Character,Integer>>(letterNumMap.entrySet());
-        Collections.sort(sortedList,new Comparator<Map.Entry<Character,Integer>>() {
-			@Override
-			public int compare(Entry<Character, Integer> o1, Entry<Character, Integer> o2) {
-				return o1.getValue().compareTo(o2.getValue());
-			}
-        });
-        for(Entry<Character, Integer> mapping:sortedList){ 
-            System.out.println(mapping.getKey()+":"+mapping.getValue()); 
-       }
+		List<Map.Entry<Character,Integer>> sortedList = search.getSortedMapList(letterNumMap);
+		//打印前6个可能的字母
+		Iterator<Entry<Character, Integer>> iterator = sortedList.iterator();
+		for (int i = 0; i < 6&&iterator.hasNext(); i++) {
+			Entry<Character, Integer> entry = iterator.next();
+			System.out.println(entry.getKey()+":"+entry.getValue());
+		}
 	}
 }

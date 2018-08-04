@@ -3,11 +3,14 @@ package com.plin.hangman.main;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 
 import com.plin.hangman.constants.Constants;
@@ -21,6 +24,7 @@ import com.plin.hangman.pojo.ResStartGameOnPojo;
 import com.plin.hangman.pojo.ResSubmitPojo;
 import com.plin.hangman.utils.HttpClientUtils;
 import com.plin.hangman.utils.JsonUtils;
+import com.plin.hangman.utils.SearchWordsUtils;
 
 public class HangmanMain {
 	
@@ -206,9 +210,7 @@ public class HangmanMain {
 		out.close();
 	}
 	
-
-	
-	private void saveGuessTimes(int guessTimes2) throws IOException {
+	public void saveGuessTimes(int guessTimes2) throws IOException {
 		if(!file.exists()) {
 			file.createNewFile();
 		}
@@ -219,5 +221,21 @@ public class HangmanMain {
 		pps.store(out, "Update " + "guessTimes" + " value");
 		in.close();
 		out.close();
+	}
+	//找出可能前6个字母
+	public List<Map.Entry<Character,Integer>> getPossibleLetter(String word){
+		SearchWordsUtils search = new SearchWordsUtils();
+		List<String> possibleWordsList=search.getPossibleWordsList(word);
+		
+		Map<Character, Integer> letterNumMap = search.findWordsByMostLetter(possibleWordsList);
+		
+		List<Map.Entry<Character,Integer>> sortedList = search.getSortedMapList(letterNumMap);
+		//打印前6个可能的字母
+		Iterator<Entry<Character, Integer>> iterator = sortedList.iterator();
+		for (int i = 0; i < 6&&iterator.hasNext(); i++) {
+			Entry<Character, Integer> entry = iterator.next();
+			System.out.println(entry.getKey()+":"+entry.getValue());
+		}
+		return sortedList;
 	}
 }

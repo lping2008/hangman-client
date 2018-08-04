@@ -1,20 +1,20 @@
 import java.io.IOException;
 import java.util.Scanner;
 
-import com.plin.hangman.pojo.ResStartGameOnPojo;
-import com.plin.hangman.pojo.ResSubmitPojo;
-import com.plin.hangman.utils.SearchWordsUtils;
 import com.plin.hangman.main.HangmanMain;
 import com.plin.hangman.pojo.ResGetResultPojo;
 import com.plin.hangman.pojo.ResGivePojo;
 import com.plin.hangman.pojo.ResMakeGuessPojo;
+import com.plin.hangman.pojo.ResStartGameOnPojo;
+import com.plin.hangman.pojo.ResSubmitPojo;
 
 public class Main {
 	static String sessionId=null;
 	
-	public static void guessWord(HangmanMain hmain,String guessALetter) throws IOException {
+	public static ResMakeGuessPojo guessWord(HangmanMain hmain,String guessALetter) throws IOException {
 		ResMakeGuessPojo resMakeGuessPojo = hmain.makeGuess(sessionId, guessALetter);
 		System.out.println(resMakeGuessPojo);
+		return resMakeGuessPojo;
 	}
 	public static void giveWord(HangmanMain hmain,String guessALetter) throws IOException {
 		System.out.println("Server is giving you a word");
@@ -77,19 +77,22 @@ public class Main {
 							break;
 						}
 						
+						ResMakeGuessPojo resMakeGuessPojo = null;
 						if(guessALetter.length()==1) {
 							if(guessALetter.charAt(0)>='A'&&guessALetter.charAt(0)<='Z') {
-								guessWord(hmain,guessALetter);
+								resMakeGuessPojo=guessWord(hmain,guessALetter);
 							}else if(guessALetter.charAt(0)>='a'&&guessALetter.charAt(0)<='z'){
 								char a=(char) (guessALetter.charAt(0)-32);
 								guessALetter=Character.toString(a);
-								guessWord(hmain,guessALetter);
+								resMakeGuessPojo=guessWord(hmain,guessALetter);
 							}else {
 								System.out.println("you did not input a letter");
 							}
 						}else {
 							System.out.println("you did not input a letter");
 						}
+						//找出前6个可能的字母
+						hmain.getPossibleLetter(resMakeGuessPojo.getData().getWord());
 					}
 				}else {
 					System.out.println("please start a new game or resume last game");
